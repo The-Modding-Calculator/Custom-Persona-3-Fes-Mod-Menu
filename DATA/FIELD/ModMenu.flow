@@ -1,4 +1,5 @@
 import ( "ModMenu.msg" );
+import("bigUglyFunc.flow");
 
 // Open menu
 void ModMenuDisplay()
@@ -80,10 +81,10 @@ int Misc_Menu_Display()
 				Remove_Member();
 				break;
 			case 7:
-				Font_Test();
+				callAllEvents();
 				break;
 			case 8:
-				RELOAD_TBLS();
+				//RELOAD_TBLS();
 				break;
 			case 19:
 				CLOSE_MSG_WIN();
@@ -647,6 +648,7 @@ void Save()
 // Used for getting id's for calling functions
 int Get_Number(int digitNum, int helpText)
 {
+	int select;
 	tryagain:
 	MSG( helpText );
 	int digit = 0;
@@ -655,9 +657,11 @@ int Get_Number(int digitNum, int helpText)
 	while (n < digitNum)
 	{
 		SEL_CHK_PAD(6, 20);
-		int select = SEL( Num_Menu );
+		select = SEL( Num_Menu );
 		if (select == 20)
-			return -1;
+		{
+			break;
+		}
 		digit *= 10;
 		digit += select;
 		n += 1;
@@ -666,9 +670,14 @@ int Get_Number(int digitNum, int helpText)
 	// Confirmation
 	SET_MSG_VAR(0, digit, 0);
     MSG( Confirmation );
-	SEL_CHK_PAD(6,1);
-	if (SEL(YesNo) == 1)
+	SEL_CHK_PAD(6,3);
+	select = SEL(YesNo);
+	if (select == 1)
+	{
 		goto tryagain;
+	} else if (select == 3) {
+		return -1;
+	}
 	
 	return(digit);
 }
@@ -676,4 +685,54 @@ int Get_Number(int digitNum, int helpText)
 void Font_Test()
 {
 	MSG( FontTest );
+}
+
+int easyCallEvent(int majorID, int minorID)
+{
+	int floor = GET_FLOOR_ID();
+	int field_major = GET_FIELD_MAJOR();
+	int field_minor = GET_FIELD_MINOR();
+	int major = majorID;
+	if (major == -1)
+	{
+		return 0;
+	}
+	int minor = minorID;
+	if (minor == -1)
+	{
+		return 0;
+	}
+	CLOSE_MSG_WIN();
+	FADE( 3, 0 );
+	FADE_SYNC();
+	BIT_ON( 0 + 0x0400 + 0x0800 + 0x0400 + 0x0400 + 7 );
+	CALL_EVENT( major, minor, 0);
+	FADE( 3, 0 );
+	FADE_SYNC();
+	if (floor != 0)
+		CALL_FLOOR( floor );
+	else
+		CALL_FIELD( field_major, field_minor, 0, 0 );
+	return 1;
+}
+
+
+int GET_FIELD_MAJOR()
+{
+	return FUNCTION_0022();
+}
+
+int GET_FIELD_MINOR()
+{
+	return FUNCTION_0023();
+}
+
+int battleAfterEvent(){
+	CALL_SFX( 3, 0 );
+	FUNCTION_01C2();
+	FUNCTION_01C3();
+	CALL_BATTLE( 431 );
+	FUNCTION_00A6();
+	FUNCTION_0093();
+	return 1;
 }

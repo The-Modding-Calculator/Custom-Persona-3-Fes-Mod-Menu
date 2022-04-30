@@ -1,4 +1,4 @@
-SET COMPILER="path\to\AtlusScriptCompiler.exe"
+SET COMPILER="D:\P4 Modding stuff\Persona Tools\AtlusScriptToolchain.1\AtlusScriptCompiler.exe"
 SET OUTPUT_PATH=path\to\Aemulus Package Manager\Packages\Persona 3 FES\P3 Fes Mod Menu
 
 IF NOT EXIST "%OUTPUT_PATH%" MKDIR "%OUTPUT_PATH%"
